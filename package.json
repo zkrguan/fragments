@@ -5,7 +5,8 @@
   "description": "My work repo while learning AWS for developer.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint --config .eslintrc.js \"./src/**/*.js\""
   },
   "repository": {
     "type": "git",
@@ -14,6 +15,7 @@
   "author": "Zhaokai Guan",
   "license": "UNLICENSED",
   "devDependencies": {
+    "eslint": "^8.56.0",
     "prettier": "3.1.1"
   }
 }
