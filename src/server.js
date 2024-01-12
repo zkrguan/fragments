@@ -14,6 +14,11 @@ const port = parseInt(process.env.PORT || '8080', 10);
 const server = stoppable(
     app.listen(port, () => {
         // Log a message that the server has started, and which port it's using.
+        if (process.env.LOG_LEVEL === 'debug') {
+            logger.debug('the processes variables are listed below');
+            logger.debug(process.env);
+            logger.debug('the end of the process env variables');
+        }
         logger.info(`Server started on port ${port}`);
     })
 );
