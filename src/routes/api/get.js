@@ -7,6 +7,7 @@
 // Their minds will be blew off, but the expressions are so elegant. It is like me saw Fardad's code first time.
 module.exports = (req, res) => {
     // TODO: this is just a placeholder. To get something working, return an empty array...
+    console.log(`Inside the get route and ready to return the result for request`);
     res.status(200).json({
         status: 'ok',
         // TODO: change me
