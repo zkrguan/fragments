@@ -3,7 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 const passport = require('passport');
-const authenticate = require('./auth');
+const authenticate = require('./auth/index');
 // Zhaokai Guan Version 0.0.1
 const logger = require('./logger');
 const pino = require('pino-http')({
@@ -28,6 +28,7 @@ app.use(compression());
 
 // Set up our passport authentication middleware
 passport.use(authenticate.strategy());
+
 app.use(passport.initialize());
 
 app.use('/', require('./routes'));
