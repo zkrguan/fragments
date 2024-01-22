@@ -5,11 +5,14 @@
  */
 // the syntax will destory the fresh backenders TBH..
 // Their minds will be blew off, but the expressions are so elegant. It is like me saw Fardad's code first time.
+
+const response = require('../../response');
+
 module.exports = (req, res) => {
-    // TODO: this is just a placeholder. To get something working, return an empty array...
-    res.status(200).json({
-        status: 'ok',
-        // TODO: change me
-        fragments: [],
-    });
+    res.status(200).json(
+        response.createSuccessResponse({
+            status: 'ok',
+            fragments: [],
+        })
+    );
 };
