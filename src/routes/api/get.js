@@ -9,7 +9,6 @@
 const response = require('../../response');
 
 module.exports = (req, res) => {
-    const demoESlintBreaks = '';
     res.status(200).json(
         response.createSuccessResponse({
             status: 'ok',
