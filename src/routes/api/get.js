@@ -1,18 +1,25 @@
-// src/routes/api/get.js
+const response = require('../../response');
 
 /**
  * Get a list of fragments for the current user
  */
-// the syntax will destory the fresh backenders TBH..
-// Their minds will be blew off, but the expressions are so elegant. It is like me saw Fardad's code first time.
-
-const response = require('../../response');
-
-module.exports = (req, res) => {
+exports.getManyFragments = function (req, res) {
     res.status(200).json(
         response.createSuccessResponse({
             status: 'ok',
             fragments: [],
+        })
+    );
+};
+
+/**
+ * Get one individual fragment by the fragment ID
+ */
+exports.getOneFragmentById = function (req, res) {
+    res.status(200).json(
+        response.createSuccessResponse({
+            status: 'ok',
+            fragments: { id: req.params.id },
         })
     );
 };
