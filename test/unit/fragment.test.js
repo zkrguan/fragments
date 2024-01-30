@@ -1,9 +1,8 @@
 const { Fragment } = require('../../src/models/fragment');
-// RG: I made this controlled in the same spot.
 const { validTypes } = require('../../src/configs/settings');
 // Wait for a certain number of ms. Feel free to change this value
 // if it isn't long enough for your test runs. Returns a Promise.
-const wait = async (ms = 10) => new Promise((resolve) => setTimeout(resolve, ms));
+const wait = async (ms = 1000) => new Promise((resolve) => setTimeout(resolve, ms));
 
 describe('Fragment class', () => {
     test('common formats are supported', () => {

@@ -1,5 +1,5 @@
 // Support sending various Content-Types on the body up to 5M in size
-const Fragment = require('../model/fragment');
+const Fragment = require('../models/fragment');
 const express = require('express');
 const contentType = require('content-type');
 

@@ -14,7 +14,7 @@ const {
     writeFragmentData,
     listFragments,
     deleteFragment,
-} = require('./data');
+} = require('./data/memory/index');
 
 class Fragment {
     constructor({ id, ownerId, created, updated, type, size = 0 }) {
@@ -23,18 +23,19 @@ class Fragment {
             throw 'OwnerID and Type are required';
         }
         // if there is not match type, then throw
-        if (!Fragment.isSupportedType()) {
+        if (!Fragment.isSupportedType(type)) {
             throw 'No matching type';
         }
         if (typeof size !== 'number') {
             throw ' Size must be a number';
         }
-        if (size >= 0) {
+        if (size < 0) {
             throw ' Size cannot be negative';
         }
         // If client code feed id, then use the incoming id. Otherwise, use generated ID.
-        this.id = id && id?.length() ? id : randomUUID();
+        this.id = id && id?.length ? id : randomUUID();
         this.ownerId = ownerId;
+        this.type = type;
         // Just in case client code actually feed a time stamp onto the constructor.
         this.created = !created ? new Date() : created;
         this.updated = !updated ? new Date() : this.created; // just like mongoDB, you created the object, updated is having same created time stamp.
@@ -58,7 +59,17 @@ class Fragment {
      * @returns Promise<Fragment>
      */
     static async byId(ownerId, id) {
-        return readFragment(ownerId, id);
+        return new Promise((resolve, reject) => {
+            readFragment(ownerId, id)
+                .then((result) => {
+                    if (result === undefined) {
+                        reject(new Error('The result is undefined'));
+                    } else {
+                        resolve(result);
+                    }
+                })
+                .catch((error) => reject(error));
+        });
     }
 
     /**
@@ -76,7 +87,9 @@ class Fragment {
      * @returns Promise<void>
      */
     save() {
-        return writeFragment(this.ownerId, this.id, this);
+        this.updated = new Date();
+        // this looks bad
+        return writeFragment(this);
     }
 
     /**
@@ -84,7 +97,7 @@ class Fragment {
      * @returns Promise<Buffer>
      */
     getData() {
-        return readFragmentData();
+        return readFragmentData(this.ownerId, this.id);
     }
 
     /**
@@ -92,8 +105,18 @@ class Fragment {
      * @param {Buffer} data
      * @returns Promise<void>
      */
-    async setData(data) {
-        return writeFragmentData(this.ownerId, this.id, data);
+    setData(data) {
+        return new Promise((resolve, reject) => {
+            if (!data || !Buffer.isBuffer(data)) {
+                reject(new Error('The buffer is not given'));
+            } else {
+                this.updated = new Date();
+                this.size = Buffer.byteLength(data);
+                writeFragmentData(this.ownerId, this.id, data)
+                    .then((res) => resolve(res))
+                    .catch((error) => reject(error));
+            }
+        });
     }
 
     /**
@@ -131,7 +154,7 @@ class Fragment {
      */
     static isSupportedType(value) {
         return validTypes.some((ele) => {
-            return ele.toLowerCase().search(value.toLowerCase()) !== -1;
+            return value?.toLowerCase() && value.toLowerCase().search(ele.toLowerCase()) !== -1;
         });
     }
 }
