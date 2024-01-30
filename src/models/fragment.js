@@ -3,6 +3,8 @@
 const { randomUUID } = require('crypto');
 // Use https://www.npmjs.com/package/content-type to create/parse Content-Type headers
 const contentType = require('content-type');
+// RG: I feel this supported type should be placed in a specific place and centralized.
+// If hard coded everywhere, how do you know which one is most accurate and updated?
 const { validTypes } = require('../configs/settings');
 // Functions for working with fragment metadata/data using our DB
 const {
@@ -20,11 +22,8 @@ class Fragment {
         if (ownerId === undefined || type === undefined || ownerId === null || type === null) {
             throw 'OwnerID and Type are required';
         }
-        const result = validTypes.some((ele) => {
-            return ele.toLowerCase().search(type.toLowerCase()) !== -1;
-        });
         // if there is not match type, then throw
-        if (!result) {
+        if (!Fragment.isSupportedType()) {
             throw 'No matching type';
         }
         if (typeof size !== 'number') {
@@ -33,10 +32,8 @@ class Fragment {
         if (size >= 0) {
             throw ' Size cannot be negative';
         }
-
-        //stopped at test 67
-        // There must be a way to get the ID
-        this.id = id;
+        // If client code feed id, then use the incoming id. Otherwise, use generated ID.
+        this.id = id && id?.length() ? id : randomUUID();
         this.ownerId = ownerId;
         // Just in case client code actually feed a time stamp onto the constructor.
         this.created = !created ? new Date() : created;
@@ -51,7 +48,7 @@ class Fragment {
      * @returns Promise<Array<Fragment>>
      */
     static async byUser(ownerId, expand = false) {
-        // TODO
+        return listFragments(ownerId, expand);
     }
 
     /**
@@ -61,7 +58,7 @@ class Fragment {
      * @returns Promise<Fragment>
      */
     static async byId(ownerId, id) {
-        // TODO
+        return readFragment(ownerId, id);
     }
 
     /**
@@ -71,7 +68,7 @@ class Fragment {
      * @returns Promise<void>
      */
     static delete(ownerId, id) {
-        // TODO
+        return deleteFragment(ownerId, id);
     }
 
     /**
@@ -79,7 +76,7 @@ class Fragment {
      * @returns Promise<void>
      */
     save() {
-        // TODO
+        return writeFragment(this.ownerId, this.id, this);
     }
 
     /**
@@ -87,7 +84,7 @@ class Fragment {
      * @returns Promise<Buffer>
      */
     getData() {
-        // TODO
+        return readFragmentData();
     }
 
     /**
@@ -96,7 +93,7 @@ class Fragment {
      * @returns Promise<void>
      */
     async setData(data) {
-        // TODO
+        return writeFragmentData(this.ownerId, this.id, data);
     }
 
     /**
@@ -113,8 +110,10 @@ class Fragment {
      * Returns true if this fragment is a text/* mime type
      * @returns {boolean} true if fragment's type is text/*
      */
+    // RG: Test case is not covering this one???? Added the test case over the fragment.test.js
     get isText() {
-        // TODO
+        // As long as the type is
+        return this.type.toLowerCase().search('text') !== -1;
     }
 
     /**
@@ -122,7 +121,7 @@ class Fragment {
      * @returns {Array<string>} list of supported mime types
      */
     get formats() {
-        // TODO
+        return validTypes;
     }
 
     /**
@@ -131,7 +130,9 @@ class Fragment {
      * @returns {boolean} true if we support this Content-Type (i.e., type/subtype)
      */
     static isSupportedType(value) {
-        // TODO
+        return validTypes.some((ele) => {
+            return ele.toLowerCase().search(value.toLowerCase()) !== -1;
+        });
     }
 }
 

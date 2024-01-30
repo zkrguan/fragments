@@ -244,4 +244,7 @@ describe('Fragment class', () => {
             expect(() => Fragment.byId('1234', fragment.id)).rejects.toThrow();
         });
     });
+
+    // RG: implement the test cases for the isText here.
+    // One for the true one for false.
 });
