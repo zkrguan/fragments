@@ -3,7 +3,7 @@
 const { randomUUID } = require('crypto');
 // Use https://www.npmjs.com/package/content-type to create/parse Content-Type headers
 const contentType = require('content-type');
-
+const { validTypes } = require('../configs/settings');
 // Functions for working with fragment metadata/data using our DB
 const {
     readFragment,
@@ -17,6 +17,31 @@ const {
 class Fragment {
     constructor({ id, ownerId, created, updated, type, size = 0 }) {
         // TODO
+        if (ownerId === undefined || type === undefined || ownerId === null || type === null) {
+            throw 'OwnerID and Type are required';
+        }
+        const result = validTypes.some((ele) => {
+            return ele.toLowerCase().search(type.toLowerCase()) !== -1;
+        });
+        // if there is not match type, then throw
+        if (!result) {
+            throw 'No matching type';
+        }
+        if (typeof size !== 'number') {
+            throw ' Size must be a number';
+        }
+        if (size >= 0) {
+            throw ' Size cannot be negative';
+        }
+
+        //stopped at test 67
+        // There must be a way to get the ID
+        this.id = id;
+        this.ownerId = ownerId;
+        // Just in case client code actually feed a time stamp onto the constructor.
+        this.created = !created ? new Date() : created;
+        this.updated = !updated ? new Date() : this.created; // just like mongoDB, you created the object, updated is having same created time stamp.
+        this.size = size;
     }
 
     /**

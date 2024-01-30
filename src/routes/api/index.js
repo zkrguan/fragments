@@ -9,12 +9,13 @@
 const express = require('express');
 const getControllers = require('./get');
 const postControllers = require('./post');
+const { rawBody } = require('../../middleWares/rawBodyParser');
 const router = express.Router();
 // Define our first route, which will be: GET /v1/fragments
 router.get('/fragments', getControllers.getManyFragments);
 router.get('/fragments/:id', getControllers.getOneFragmentById);
 
 // Other routes (POST, DELETE, etc.) will go here later on...
-router.post('/fragments', postControllers.postCreateFragment);
+router.post('/fragments', rawBody, postControllers.postCreateFragment);
 
 module.exports = router;
