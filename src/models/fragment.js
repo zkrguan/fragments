@@ -24,6 +24,7 @@ class Fragment {
         }
         // if there is not match type, then throw
         if (!Fragment.isSupportedType(type)) {
+            console.log(type);
             throw 'No matching type';
         }
         if (typeof size !== 'number') {

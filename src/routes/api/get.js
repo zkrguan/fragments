@@ -37,7 +37,7 @@ exports.getOneFragmentById = async function (req, res) {
         res.status(200).json(
             response.createSuccessResponse({
                 status: 'ok',
-                fragments: data.toString(),
+                fragment: data.toString(),
             })
         );
     } catch (error) {
