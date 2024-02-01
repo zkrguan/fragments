@@ -16,14 +16,15 @@ exports.postCreateFragment = async function (req, res) {
         const rawBody = req.body;
         await fragment.save();
         await fragment.setData(rawBody);
-        console.info(`Line 19`);
+        res.location(`http://${req.headers.host}/v1/fragments/${fragment.id}`);
         res.status(200).json(
             response.createSuccessResponse({
                 status: 'ok',
-                fragment: JSON.stringify(fragment),
+                fragment: fragment,
             })
         );
     } catch (err) {
+        //RG: TD handle the 415 code still
         logger.error(err);
         res.status(400).json(
             response.createErrorResponse(400, `The fragment was not properly created.`)
