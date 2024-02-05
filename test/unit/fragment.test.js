@@ -1,23 +1,8 @@
-const { Fragment } = require('../../src/model/fragment');
-
+const { Fragment } = require('../../src/models/fragment');
+const { validTypes } = require('../../src/configs/settings');
 // Wait for a certain number of ms. Feel free to change this value
 // if it isn't long enough for your test runs. Returns a Promise.
-const wait = async (ms = 10) => new Promise((resolve) => setTimeout(resolve, ms));
-
-const validTypes = [
-    `text/plain`,
-    /*
-   Currently, only text/plain is supported. Others will be added later.
-
-  `text/markdown`,
-  `text/html`,
-  `application/json`,
-  `image/png`,
-  `image/jpeg`,
-  `image/webp`,
-  `image/gif`,
-  */
-];
+const wait = async (ms = 1000) => new Promise((resolve) => setTimeout(resolve, ms));
 
 describe('Fragment class', () => {
     test('common formats are supported', () => {
@@ -258,4 +243,7 @@ describe('Fragment class', () => {
             expect(() => Fragment.byId('1234', fragment.id)).rejects.toThrow();
         });
     });
+
+    // RG: implement the test cases for the isText here.
+    // One for the true one for false.
 });
