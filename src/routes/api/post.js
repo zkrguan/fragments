@@ -17,17 +17,24 @@ exports.postCreateFragment = async function (req, res) {
         await fragment.save();
         await fragment.setData(rawBody);
         res.location(`http://${req.headers.host}/v1/fragments/${fragment.id}`);
-        res.status(200).json(
+        res.status(201).json(
             response.createSuccessResponse({
                 status: 'ok',
                 fragment: fragment,
             })
         );
     } catch (err) {
-        //RG: TD handle the 415 code still
         logger.error(err);
-        res.status(400).json(
-            response.createErrorResponse(400, `The fragment was not properly created.`)
-        );
+        
+        if(err === "No matching type"){
+            res.status(415).json(
+                response.createErrorResponse(415,'The fragment was not created! The media type is not supported.')
+            )
+        }
+        else{
+            res.status(400).json(
+                response.createErrorResponse(400, `The fragment was not properly created.`)
+            );
+        }
     }
 };
