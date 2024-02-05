@@ -108,8 +108,8 @@ class Fragment {
      */
     setData(data) {
         return new Promise((resolve, reject) => {
-            if (!data || !Buffer.isBuffer(data)) {
-                reject(new Error('The buffer is not given'));
+            if (!data || !Buffer.isBuffer(data) || data.toString() == '') {
+                reject(new Error('The buffer is not given or empty'));
             } else {
                 this.updated = new Date();
                 this.size = Buffer.byteLength(data);

@@ -25,15 +25,20 @@ exports.postCreateFragment = async function (req, res) {
         );
     } catch (err) {
         logger.error(err);
-        
-        if(err === "No matching type"){
+
+        if (err === 'No matching type') {
             res.status(415).json(
-                response.createErrorResponse(415,'The fragment was not created! The media type is not supported.')
-            )
-        }
-        else{
+                response.createErrorResponse(
+                    415,
+                    'The fragment was not created! The media type is not supported.'
+                )
+            );
+        } else {
             res.status(400).json(
-                response.createErrorResponse(400, `The fragment was not properly created.`)
+                response.createErrorResponse(
+                    400,
+                    `The fragment was not created, your fragment could be empty.`
+                )
             );
         }
     }

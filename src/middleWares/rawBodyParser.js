@@ -1,7 +1,6 @@
 const { Fragment } = require('../models/fragment');
 const express = require('express');
 const contentType = require('content-type');
-const logger = require('../logger');
 
 // Define the rawBody middleware
 const rawBodyMiddleware = express.raw({
@@ -19,8 +18,7 @@ const rawBodyMiddleware = express.raw({
 // Export the middleware
 module.exports = rawBodyMiddleware;
 
-// Optionally, if you want to use it as part of a custom middleware function
-exports.rawBody = (req, res, next) => {
-    logger.debug(`This is inside the mid ware`);
-    rawBodyMiddleware(req, res, next);
-};
+// // Optionally, if you want to use it as part of a custom middleware function
+// exports.rawBody = (req, res, next) => {
+//     rawBodyMiddleware(req, res, next);
+// };

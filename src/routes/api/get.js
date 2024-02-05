@@ -16,6 +16,7 @@ exports.getManyFragments = async function (req, res) {
             })
         );
     } catch (err) {
+        // This should never ever run. If so, that means server needs a hot fix
         logger.error(err);
         res.status(501).json(
             response.createErrorResponse({
@@ -41,11 +42,19 @@ exports.getOneFragmentById = async function (req, res) {
             })
         );
     } catch (error) {
-        if (error == 'The result is undefined') {
+        if (error.message === 'The result is undefined') {
             res.status(404).json(
                 response.createErrorResponse({
                     status: 'not found',
                     message: 'Server could not find related fragment related to this ID',
+                })
+            );
+        } else {
+            // This should never run at all, cannot be tested
+            res.status(500).json(
+                response.createErrorResponse({
+                    status: 'not found',
+                    message: 'Internal server issue',
                 })
             );
         }

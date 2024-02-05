@@ -4,7 +4,7 @@ const request = require('supertest');
 
 const app = require('../../src/app');
 
-describe('GET /v1/fragments', () => {
+describe('GET /v1/fragments Auth Check', () => {
     // If the request is missing the Authorization header, it should be forbidden
     test('unauthenticated requests are denied', () =>
         request(app).get('/v1/fragments').expect(401));
@@ -23,6 +23,74 @@ describe('GET /v1/fragments', () => {
         expect(res.body.status).toBe('ok');
         expect(Array.isArray(res.body.fragments)).toBe(true);
     });
+});
 
-    // TODO: we'll need to add tests to check the contents of the fragments array later
+describe('GET /v1/fragments/:id retrieve individual after persisting', () => {
+    let objectId = [];
+    // Create the object using POST before any test in this suite
+    beforeAll(async () => {
+        for (let i = 0; i < 5; i++) {
+            const payload = Buffer.from('This is test object number ' + (i + 1));
+            const response = await request(app)
+                .post('/v1/fragments')
+                .auth('user1@email.com', 'password1')
+                .set('Content-Type', 'text/plain')
+                .send(payload)
+                .expect(201);
+            objectId.push(response.body.fragment.id);
+        }
+    });
+
+    test('Retrieve object using GET', async () => {
+        expect(objectId).toBeDefined();
+        for (let i = 0; i < 5; i++) {
+            const res = await request(app)
+                .get(`/v1/fragments/${objectId[i]}`)
+                .auth('user1@email.com', 'password1')
+                .expect(200);
+            expect(res.body.fragment).toEqual('This is test object number ' + (i + 1));
+        }
+    });
+
+    test('Using Wrong ID and get 404 back', async () => {
+        for (let i = 0; i < 5; i++) {
+            await request(app)
+                .get(`/v1/fragments/aFunnyID`)
+                .auth('user1@email.com', 'password1')
+                .expect(404);
+        }
+    });
+});
+
+describe('GET /v1/fragments/?expands=1 retrieve a list', () => {
+    let objectId = [];
+    // Create the object using POST before any test in this suite
+    beforeAll(async () => {
+        for (let i = 0; i < 5; i++) {
+            const payload = Buffer.from('This is test object number ' + (i + 1));
+            const response = await request(app)
+                .post('/v1/fragments')
+                .auth('user1@email.com', 'password1')
+                .set('Content-Type', 'text/plain')
+                .send(payload)
+                .expect(201);
+            objectId.push(response.body.fragment.id);
+        }
+    });
+
+    test('If the length matched with posted length', async () => {
+        const res = await request(app)
+            .get(`/v1/fragments/?expand=1`)
+            .auth('user1@email.com', 'password1')
+            .expect(200);
+        // YOU CANNOT TRUST THE SEQUENCE BECAUSE DICT USED FOR MEMORY DB
+        // DATA STRUCTURE 101=> THERE IS NO SEQUENCE IN HASH MAP.
+        for (let i = 0; i < 5; i++) {
+            expect(
+                res.body.fragments.find((ele) => {
+                    return ele.id === objectId[i];
+                }).id
+            ).toEqual(objectId[i]);
+        }
+    });
 });
