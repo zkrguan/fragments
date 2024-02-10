@@ -33,11 +33,7 @@ exports.getOneFragmentById = async function (req, res) {
     try {
         const result = await Fragment.byId(req.user, id);
         const data = await result.getData();
-        res.status(200).json(
-            response.createSuccessResponse({
-                fragment: data.toString(),
-            })
-        );
+        res.status(200).send(data.toString('utf-8'));
     } catch (error) {
         if (error.message === 'The result is undefined') {
             res.status(404).json(response.createErrorResponse(404, 'Could not find the object'));
