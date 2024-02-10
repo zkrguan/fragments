@@ -48,7 +48,8 @@ describe('GET /v1/fragments/:id retrieve individual after persisting', () => {
                 .get(`/v1/fragments/${objectId[i]}`)
                 .auth('user1@email.com', 'password1')
                 .expect(200);
-            expect(res.body.fragment).toEqual('This is test object number ' + (i + 1));
+            const text = res.text;
+            expect(text).toEqual('This is test object number ' + (i + 1));
         }
     });
 
