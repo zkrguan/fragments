@@ -18,13 +18,11 @@ const {
 
 class Fragment {
     constructor({ id, ownerId, created, updated, type, size = 0 }) {
-        // TODO
         if (ownerId === undefined || type === undefined || ownerId === null || type === null) {
             throw 'OwnerID and Type are required';
         }
         // if there is not match type, then throw
         if (!Fragment.isSupportedType(type)) {
-            console.log(type);
             throw 'No matching type';
         }
         if (typeof size !== 'number') {
