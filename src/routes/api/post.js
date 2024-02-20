@@ -10,7 +10,7 @@ exports.postCreateFragment = async function (req, res) {
             ownerId: req.user,
             type: req.headers['content-type'],
         });
-        const rawBody = req.body;
+        var rawBody = req.body;
         await fragment.save();
         await fragment.setData(rawBody);
         res.location(`http://${req.headers.host}/v1/fragments/${fragment.id}`);
