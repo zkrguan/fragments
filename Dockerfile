@@ -38,7 +38,8 @@ RUN npm install
 ############# ############# ############# ############# #############
 FROM node:20.11.1-alpine3.19@sha256:c0a3badbd8a0a760de903e00cedbca94588e609299820557e72cba2a53dbaa2c AS Start
 # Setting up curl otherwise there is no curl to use in the health check
-RUN apk update && apk add --no-cache curl
+# THIS IS HOW YOU SELECT A VERSION IN 
+RUN apk update && apk add --no-cache 'curl=8.5.0-r0'
 # Setting work dir 
 # For docker noobs, the work dir is set as /app
 # PWD is /app
@@ -55,7 +56,7 @@ COPY . .
 # COPY ./test/.htpasswd ./test/.htpasswd
 
 # Start the server and get ready to run it
-CMD npm start
+CMD ["npm", "start"]
 EXPOSE 8080
 
 
