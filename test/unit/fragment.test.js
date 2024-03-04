@@ -156,7 +156,12 @@ describe('Fragment class', () => {
                 size: 0,
             });
             // Cuz you added application/json into the supporting type
-            expect(fragment.formats).toEqual(['text/plain', 'application/json']);
+            expect(fragment.formats).toEqual([
+                'text/plain',
+                'application/json',
+                `text/markdown`,
+                `text/html`,
+            ]);
         });
     });
 
