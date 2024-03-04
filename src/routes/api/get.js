@@ -33,18 +33,7 @@ exports.getOneFragmentById = async function (req, res) {
     try {
         const result = await Fragment.byId(req.user, id);
         const data = await result.getData();
-        let processedData;
-        switch (result?.type) {
-            case 'application/json':
-                processedData = JSON.parse(data.toString('utf-8'));
-                break;
-            case 'text/plain':
-                processedData = data.toString('utf-8');
-                break;
-            default:
-                throw 'unexpected error occurred in getOneFragmentById before getData';
-        }
-        res.status(200).send(processedData);
+        res.set({ 'Content-Type': result.type }).status(200).send(data);
     } catch (error) {
         if (error.message === 'The result is undefined') {
             res.status(404).json(response.createErrorResponse(404, 'Could not find the object'));
