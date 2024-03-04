@@ -13,7 +13,9 @@ const rawBodyMiddleware = require('../../middleWares/rawBodyParser');
 const router = express.Router();
 // Define our first route, which will be: GET /v1/fragments
 router.get('/fragments', getControllers.getManyFragments);
+// Upgraded version
 router.get('/fragments/:id', getControllers.getOneFragmentById);
+router.get('/fragments/:id/info', getControllers.getOneFragmentByIdWithInfo);
 
 // Other routes (POST, DELETE, etc.) will go here later on...
 router.post('/fragments', rawBodyMiddleware, postControllers.postCreateFragment);

@@ -10,7 +10,7 @@
     "coverage": "jest -c jest.config.js --runInBand --coverage",
     "lint": "eslint --config .eslintrc.js \"./src/**/*.js\"",
     "start": "node src/index.js",
-    "dev": " cross-env LOG_LEVEL=debug nodemon ./src/index.js --watch src",
+    "dev": " cross-env LOG_LEVEL=warn nodemon ./src/index.js --watch src",
     "debug": " cross-env  LOG_LEVEL=debug nodemon --inspect=0.0.0.0:9229 ./src/index.js --watch src"
   },
   "repository": {
@@ -36,6 +36,7 @@
     "express": "^4.18.2",
     "helmet": "^7.1.0",
     "http-auth": "^4.2.0",
+    "markdown-it": "^14.0.0",
     "passport": "^0.7.0",
     "passport-http-bearer": "^1.0.1",
     "pino": "^8.17.2",
