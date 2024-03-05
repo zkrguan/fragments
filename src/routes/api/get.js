@@ -107,7 +107,6 @@ const conversionHelper = async (sourceObject, outputType) => {
     // Be aware some cases like converting md to html. => Will change the data from the result object.
     switch (outputType) {
         case '.txt':
-            resultObject.rawData = md.renderInline(data.toString('utf-8'));
             resultObject.contentType = 'text/plain';
             break;
         case '.html':
@@ -115,6 +114,8 @@ const conversionHelper = async (sourceObject, outputType) => {
             resultObject.rawData = md.render(data.toString('utf-8'));
             resultObject.contentType = 'text/html';
             break;
+        case '.json':
+            resultObject.contentType = 'application/json';
         // Add cases for other output types as needed
         // Impossible to have any cases because validated before this step
     }

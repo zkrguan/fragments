@@ -3,6 +3,7 @@
 const request = require('supertest');
 
 const app = require('../../src/app');
+const logger = require('../../src/logger');
 
 describe('GET /v1/fragments Auth Check', () => {
     // If the request is missing the Authorization header, it should be forbidden
@@ -123,6 +124,56 @@ describe('GET /v1/fragments/:id retrieve individual ', () => {
             expect(text).toEqual('# This is test object number ' + (i + 1));
             const contentType = res.headers['content-type'];
             expect(contentType).toEqual('text/plain; charset=utf-8');
+        }
+    });
+
+    test('Using Wrong ID and get 404 back', async () => {
+        for (let i = 0; i < 5; i++) {
+            await request(app)
+                .get(`/v1/fragments/aFunnyID`)
+                .auth('user1@email.com', 'password1')
+                .expect(404);
+        }
+    });
+
+    test('Using unsupported type and get 415 back', async () => {
+        for (let i = 0; i < 5; i++) {
+            await request(app)
+                .get(`/v1/fragments/${objectId[i]}.mp4`)
+                .auth('user1@email.com', 'password1')
+                .expect(415);
+        }
+    });
+});
+
+describe('GET /v1/fragments/:id retrieve individual json => text', () => {
+    let objectId = [];
+    // Create the object using POST persist 5 object using md
+    beforeAll(async () => {
+        for (let i = 0; i < 5; i++) {
+            const payload = Buffer.from(`{ id: ${i + 1} }`);
+            const response = await request(app)
+                .post('/v1/fragments')
+                .auth('user1@email.com', 'password1')
+                .set('content-type', 'application/json; charset=utf-8')
+                .send(payload)
+                .expect(201);
+            objectId.push(response.body.fragment.id);
+        }
+    });
+
+    test('Retrieve object using GET', async () => {
+        expect(objectId).toBeDefined();
+        for (let i = 0; i < 5; i++) {
+            const res = await request(app)
+                .get(`/v1/fragments/${objectId[i]}.txt`)
+                .auth('user1@email.com', 'password1')
+                .expect(200);
+            const dataString = Buffer.from(JSON.parse(res.text).data).toString();
+            expect(dataString).toEqual(`{ id: ${i + 1} }`);
+            // Assuming your data is JSON, parse it
+            // Now you can access the data property and perform your assertions
+            expect(res.headers['content-type']).toEqual('text/plain; charset=utf-8');
         }
     });
 

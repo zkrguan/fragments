@@ -13,5 +13,6 @@ require('dotenv').config({ path: envFile });
 // Set our Jest options, see https://jestjs.io/docs/configuration
 module.exports = {
     verbose: true,
+    bail: 1,
     testTimeout: 5000,
 };
