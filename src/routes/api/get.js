@@ -39,13 +39,17 @@ exports.getOneFragmentById = async function (req, res) {
             const trimmedId = id.substring(0, index);
             const extension = id.substring(index);
             const result = await Fragment.byId(req.user, trimmedId);
-            if (supportedConversion[result.type].find((ele) => ele === extension) !== undefined) {
+            const trimmedType = result.type.includes(';')
+                ? result.type.substr(0, result.type.search(';'))
+                : result.type;
+            if (supportedConversion[trimmedType].find((ele) => ele === extension) !== undefined) {
                 const dataObject = await conversionHelper(result, extension);
                 res.set({ 'Content-Type': dataObject.contentType })
                     .status(200)
                     .send(dataObject.rawData);
             } else {
-                throw 'not supported';
+                console.log('not supported zone');
+                throw new Error('not supported');
             }
         } else {
             const result = await Fragment.byId(req.user, id);
@@ -56,8 +60,8 @@ exports.getOneFragmentById = async function (req, res) {
         if (error.message === 'The result is undefined') {
             res.status(404).json(response.createErrorResponse(404, 'Could not find the object'));
         } else if (error.message === 'not supported') {
-            res.status(404).json(
-                response.createErrorResponse(404, 'This conversion is not supported')
+            res.status(415).json(
+                response.createErrorResponse(415, 'This conversion is not supported')
             );
         } else {
             // This should never run at all, cannot be tested
@@ -76,7 +80,7 @@ exports.getOneFragmentByIdWithInfo = async function (req, res) {
         res.status(200).json(
             response.createSuccessResponse({
                 status: 'ok',
-                fragments: await Fragment.byId(req.user, id),
+                fragment: await Fragment.byId(req.user, id),
             })
         );
     } catch (error) {

@@ -95,3 +95,102 @@ describe('GET /v1/fragments/?expands=1 retrieve a list', () => {
         }
     });
 });
+
+describe('GET /v1/fragments/:id retrieve individual ', () => {
+    let objectId = [];
+    // Create the object using POST before any test in this suite
+    beforeAll(async () => {
+        for (let i = 0; i < 5; i++) {
+            const payload = Buffer.from('# This is test object number ' + (i + 1));
+            const response = await request(app)
+                .post('/v1/fragments')
+                .auth('user1@email.com', 'password1')
+                .set('content-type', 'text/markdown; charset=utf-8')
+                .send(payload)
+                .expect(201);
+            objectId.push(response.body.fragment.id);
+        }
+    });
+
+    test('Retrieve object using GET', async () => {
+        expect(objectId).toBeDefined();
+        for (let i = 0; i < 5; i++) {
+            const res = await request(app)
+                .get(`/v1/fragments/${objectId[i]}.txt`)
+                .auth('user1@email.com', 'password1')
+                .expect(200);
+            const text = res.text;
+            expect(text).toEqual('# This is test object number ' + (i + 1));
+            const contentType = res.headers['content-type'];
+            expect(contentType).toEqual('text/plain; charset=utf-8');
+        }
+    });
+
+    test('Using Wrong ID and get 404 back', async () => {
+        for (let i = 0; i < 5; i++) {
+            await request(app)
+                .get(`/v1/fragments/aFunnyID`)
+                .auth('user1@email.com', 'password1')
+                .expect(404);
+        }
+    });
+
+    test('Using unsupported type and get 415 back', async () => {
+        for (let i = 0; i < 5; i++) {
+            await request(app)
+                .get(`/v1/fragments/${objectId[i]}.mp4`)
+                .auth('user1@email.com', 'password1')
+                .expect(415);
+        }
+    });
+});
+
+describe('GET /v1/fragments/:id/info retrieve individual meta data', () => {
+    let objectId = [];
+    let objectList = [];
+    // Create the object using POST before any test in this suite
+    beforeAll(async () => {
+        for (let i = 0; i < 5; i++) {
+            const payload = Buffer.from('# This is test object number ' + (i + 1));
+            const response = await request(app)
+                .post('/v1/fragments')
+                .auth('user1@email.com', 'password1')
+                .set('content-type', 'text/markdown; charset=utf-8')
+                .send(payload)
+                .expect(201);
+            objectId.push(response.body.fragment.id);
+            objectList.push(response.body);
+        }
+    });
+
+    test('Retrieve meta data using GET', async () => {
+        expect(objectId).toBeDefined();
+        for (let i = 0; i < 5; i++) {
+            const res = await request(app)
+                .get(`/v1/fragments/${objectId[i]}/info`)
+                .auth('user1@email.com', 'password1')
+                .expect(200);
+            expect(res.body.fragment).toEqual(objectList[i].fragment);
+            expect(res.status).toEqual(200);
+            expect(res.headers['content-type']).toEqual('application/json; charset=utf-8');
+        }
+    });
+
+    test('Using Wrong ID and get 404 back', async () => {
+        for (let i = 0; i < 5; i++) {
+            await request(app)
+                .get(`/v1/fragments/aFunnyID/info`)
+                .auth('user1@email.com', 'password1')
+                .expect(404);
+        }
+    });
+
+    test('Using unsupported type and get 415 back', async () => {
+        for (let i = 0; i < 5; i++) {
+            await request(app)
+                .get(`/v1/fragments/${objectId[i]}.mp4`)
+                .auth('user1@email.com', 'password1')
+                .expect(415);
+        }
+    });
+});
