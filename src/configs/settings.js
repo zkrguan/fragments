@@ -3,6 +3,7 @@ module.exports.validTypes = [
     `application/json`,
     `text/markdown`,
     `text/html`,
+    `text/csv`,
     /*
    Currently, only text/plain is supported. Others will be added later.
   `image/png`,

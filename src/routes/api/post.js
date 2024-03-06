@@ -6,6 +6,8 @@ const logger = require('../../logger');
  */
 exports.postCreateFragment = async function (req, res) {
     try {
+        console.log(`-----line 9`);
+        console.log(req);
         const fragment = new Fragment({
             ownerId: req.user,
             type: req.headers['content-type'],

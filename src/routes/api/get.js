@@ -115,9 +115,36 @@ const conversionHelper = async (sourceObject, outputType) => {
             resultObject.contentType = 'text/html';
             break;
         case '.json':
+            if (sourceObject.type.toLowerCase() === 'text/csv') {
+                // resultObject.rawData =
+                resultObject.rawData = csvJSON(data.toString('utf-8'));
+                console.log(resultObject.rawData);
+                // Parse CSV data
+                // Convert parsed data to JSON
+            }
             resultObject.contentType = 'application/json';
         // Add cases for other output types as needed
         // Impossible to have any cases because validated before this step
     }
     return resultObject;
+};
+
+// Helper from stack-overflow
+// https://stackoverflow.com/questions/27979002/convert-csv-data-into-json-format-using-javascript
+const csvJSON = (csv) => {
+    const rows = csv.trim().split('\n'); // Split the string into rows
+    const headers = rows[0].split(',').map((header) => header.trim()); // Extract headers and remove leading/trailing spaces
+    const data = [];
+
+    // Start from index 1 to skip the headers
+    for (let i = 1; i < rows.length; i++) {
+        const row = rows[i].split(',').map((value) => value.trim()); // Split each row into values and remove leading/trailing spaces
+        const rowData = {};
+        for (let j = 0; j < headers.length; j++) {
+            rowData[headers[j]] = row[j]; // Create an object with header-value pairs
+        }
+        data.push(rowData); // Push the row data into the result array
+    }
+
+    return data;
 };

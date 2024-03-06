@@ -3,7 +3,6 @@
 const request = require('supertest');
 
 const app = require('../../src/app');
-const logger = require('../../src/logger');
 
 describe('GET /v1/fragments Auth Check', () => {
     // If the request is missing the Authorization header, it should be forbidden
