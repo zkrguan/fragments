@@ -33,7 +33,6 @@ exports.getManyFragments = async function (req, res) {
 exports.getOneFragmentById = async function (req, res) {
     const id = req.params['id'];
     try {
-        console.log(id);
         if (id.includes('.')) {
             const index = id.search(/\./);
             const trimmedId = id.substring(0, index);
@@ -48,7 +47,6 @@ exports.getOneFragmentById = async function (req, res) {
                     .status(200)
                     .send(dataObject.rawData);
             } else {
-                console.log('not supported zone');
                 throw new Error('not supported');
             }
         } else {
@@ -115,21 +113,21 @@ const conversionHelper = async (sourceObject, outputType) => {
             resultObject.contentType = 'text/html';
             break;
         case '.json':
-            if (sourceObject.type.toLowerCase() === 'text/csv') {
+            if (sourceObject.type.toLowerCase().includes('text/csv')) {
                 // resultObject.rawData =
                 resultObject.rawData = csvJSON(data.toString('utf-8'));
-                console.log(resultObject.rawData);
                 // Parse CSV data
                 // Convert parsed data to JSON
             }
             resultObject.contentType = 'application/json';
-        // Add cases for other output types as needed
-        // Impossible to have any cases because validated before this step
+            // Add cases for other output types as needed
+            // Impossible to have any cases because validated before this step
+            break;
     }
     return resultObject;
 };
 
-// Helper from stack-overflow
+// CSV parser Helper from stack-overflow
 // https://stackoverflow.com/questions/27979002/convert-csv-data-into-json-format-using-javascript
 const csvJSON = (csv) => {
     const rows = csv.trim().split('\n'); // Split the string into rows

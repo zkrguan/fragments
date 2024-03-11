@@ -1,7 +1,6 @@
 // tests/unit/get.test.js
 
 const request = require('supertest');
-
 const app = require('../../src/app');
 
 describe('GET /v1/fragments Auth Check', () => {
@@ -145,6 +144,56 @@ describe('GET /v1/fragments/:id retrieve individual ', () => {
     });
 });
 
+describe('GET /v1/fragments/:id/info retrieve individual meta data', () => {
+    let objectId = [];
+    let objectList = [];
+    // Create the object using POST before any test in this suite
+    beforeAll(async () => {
+        for (let i = 0; i < 5; i++) {
+            const payload = Buffer.from('# This is test object number ' + (i + 1));
+            const response = await request(app)
+                .post('/v1/fragments')
+                .auth('user1@email.com', 'password1')
+                .set('content-type', 'text/markdown; charset=utf-8')
+                .send(payload)
+                .expect(201);
+            objectId.push(response.body.fragment.id);
+            objectList.push(response.body);
+        }
+    });
+
+    test('Retrieve meta data using GET', async () => {
+        expect(objectId).toBeDefined();
+        for (let i = 0; i < 5; i++) {
+            const res = await request(app)
+                .get(`/v1/fragments/${objectId[i]}/info`)
+                .auth('user1@email.com', 'password1')
+                .expect(200);
+            expect(res.body.fragment).toEqual(objectList[i].fragment);
+            expect(res.status).toEqual(200);
+            expect(res.headers['content-type']).toEqual('application/json; charset=utf-8');
+        }
+    });
+
+    test('Using Wrong ID and get 404 back', async () => {
+        for (let i = 0; i < 5; i++) {
+            await request(app)
+                .get(`/v1/fragments/aFunnyID/info`)
+                .auth('user1@email.com', 'password1')
+                .expect(404);
+        }
+    });
+
+    test('Using unsupported type and get 415 back', async () => {
+        for (let i = 0; i < 5; i++) {
+            await request(app)
+                .get(`/v1/fragments/${objectId[i]}.mp4`)
+                .auth('user1@email.com', 'password1')
+                .expect(415);
+        }
+    });
+});
+
 describe('GET /v1/fragments/:id retrieve individual json => text', () => {
     let objectId = [];
     // Create the object using POST persist 5 object using md
@@ -195,13 +244,11 @@ describe('GET /v1/fragments/:id retrieve individual json => text', () => {
     });
 });
 
-describe('GET /v1/fragments/:id/info retrieve individual meta data', () => {
+describe('GET /v1/fragments/:id retrieve individual markdown => text', () => {
     let objectId = [];
-    let objectList = [];
-    // Create the object using POST before any test in this suite
     beforeAll(async () => {
         for (let i = 0; i < 5; i++) {
-            const payload = Buffer.from('# This is test object number ' + (i + 1));
+            const payload = Buffer.from(`# Object ${i + 1}\nThis is test object number ${i + 1}`);
             const response = await request(app)
                 .post('/v1/fragments')
                 .auth('user1@email.com', 'password1')
@@ -209,27 +256,25 @@ describe('GET /v1/fragments/:id/info retrieve individual meta data', () => {
                 .send(payload)
                 .expect(201);
             objectId.push(response.body.fragment.id);
-            objectList.push(response.body);
         }
     });
 
-    test('Retrieve meta data using GET', async () => {
+    test('Retrieve object using GET', async () => {
         expect(objectId).toBeDefined();
         for (let i = 0; i < 5; i++) {
             const res = await request(app)
-                .get(`/v1/fragments/${objectId[i]}/info`)
+                .get(`/v1/fragments/${objectId[i]}.txt`)
                 .auth('user1@email.com', 'password1')
                 .expect(200);
-            expect(res.body.fragment).toEqual(objectList[i].fragment);
-            expect(res.status).toEqual(200);
-            expect(res.headers['content-type']).toEqual('application/json; charset=utf-8');
+            expect(res.text).toEqual(`# Object ${i + 1}\nThis is test object number ${i + 1}`);
+            expect(res.headers['content-type']).toEqual('text/plain; charset=utf-8');
         }
     });
 
     test('Using Wrong ID and get 404 back', async () => {
         for (let i = 0; i < 5; i++) {
             await request(app)
-                .get(`/v1/fragments/aFunnyID/info`)
+                .get(`/v1/fragments/aFunnyID`)
                 .auth('user1@email.com', 'password1')
                 .expect(404);
         }
@@ -241,6 +286,69 @@ describe('GET /v1/fragments/:id/info retrieve individual meta data', () => {
                 .get(`/v1/fragments/${objectId[i]}.mp4`)
                 .auth('user1@email.com', 'password1')
                 .expect(415);
+        }
+    });
+});
+
+describe('GET /v1/fragments/:id retrieve individual CSV => json', () => {
+    let objectId = [];
+    // Create the object using POST persist 5 object using CSV
+    beforeAll(async () => {
+        for (let i = 0; i < 5; i++) {
+            const payload = 'Name, Age\nJohn, 30\nDoe, 25';
+            const response = await request(app)
+                .post('/v1/fragments')
+                .auth('user1@email.com', 'password1')
+                .set('content-type', 'text/csv; charset=utf-8')
+                .send(payload)
+                .expect(201);
+            objectId.push(response.body.fragment.id);
+        }
+    });
+
+    test('Retrieve object using GET', async () => {
+        expect(objectId).toBeDefined();
+        for (let i = 0; i < 5; i++) {
+            const res = await request(app)
+                .get(`/v1/fragments/${objectId[i]}.json`)
+                .auth('user1@email.com', 'password1')
+                .expect(200);
+            expect(res.body).toEqual([
+                { Name: 'John', Age: '30' },
+                { Name: 'Doe', Age: '25' },
+            ]);
+            expect(res.headers['content-type']).toEqual('application/json; charset=utf-8');
+        }
+    });
+});
+
+describe('GET /v1/fragments/:id retrieve individual markdown => HTML', () => {
+    let objectId = [];
+    // Create the object using POST persist 5 object using Markdown
+    beforeAll(async () => {
+        for (let i = 0; i < 5; i++) {
+            const payload = Buffer.from(`# Object ${i + 1}\nThis is test object number ${i + 1}`);
+            const response = await request(app)
+                .post('/v1/fragments')
+                .auth('user1@email.com', 'password1')
+                .set('content-type', 'text/markdown; charset=utf-8')
+                .send(payload)
+                .expect(201);
+            objectId.push(response.body.fragment.id);
+        }
+    });
+
+    test('Retrieve object using GET', async () => {
+        expect(objectId).toBeDefined();
+        for (let i = 0; i < 5; i++) {
+            const res = await request(app)
+                .get(`/v1/fragments/${objectId[i]}.html`) // Convert markdown to HTML
+                .auth('user1@email.com', 'password1')
+                .expect(200);
+            // Assuming the response contains HTML content
+            expect(res.headers['content-type']).toMatch('text/html');
+            // You might need to adjust this assertion depending on how your markdown is rendered to HTML
+            expect(res.text).toEqual(expect.stringContaining(`<h1>Object ${i + 1}</h1>`));
         }
     });
 });
