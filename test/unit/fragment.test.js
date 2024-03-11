@@ -161,6 +161,7 @@ describe('Fragment class', () => {
                 'application/json',
                 `text/markdown`,
                 `text/html`,
+                'text/csv',
             ]);
         });
     });
