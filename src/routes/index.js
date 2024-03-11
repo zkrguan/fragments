@@ -11,6 +11,7 @@ const router = express.Router();
 
 const response = require('../response');
 
+const { hostname } = require('os');
 /**
  * Expose all of our API routes on /v1/* to include an API version.
  */
@@ -30,6 +31,7 @@ router.get('/', (req, res) => {
             author: author,
             githubUrl: 'https://github.com/zkrguan/fragments',
             version,
+            hostname: hostname(),
         })
     );
 });
