@@ -13,7 +13,7 @@ exports.postCreateFragment = async function (req, res) {
         var rawBody = req.body;
         await fragment.save();
         await fragment.setData(rawBody);
-        res.location(`http://${process.env.API_URL}/v1/fragments/${fragment.id}`);
+        res.location(`${process.env.API_URL}/v1/fragments/${fragment.id}`);
         res.status(201).json(
             response.createSuccessResponse({
                 fragment: fragment,
