@@ -32,7 +32,7 @@ ENV NPM_CONFIG_COLOR=false
 ENV NODE_ENV=production
 # Install node dependencies defined in package-lock.json
 COPY package*.json ./
-RUN npm install 
+RUN npm install ci
 ############# ############# ############# ############# #############
 ############# Stage 1 getting the repo ready #############
 ############# ############# ############# ############# #############
