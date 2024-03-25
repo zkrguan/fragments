@@ -37,13 +37,13 @@ jobs:
             # update them if you are doing this during a new session:
             # `Error: The security token included in the request is expired`
             - name: Configure AWS Credentials using Secrets
-              uses: aws-actions/amazon-ecs-render-task-definition@v1
+              uses: aws-actions/configure-aws-credentials@v2
               with:
                   # Use our GitHub Encrypted Secrets via secrets.*
                   # How come don't need URI for registry?
-                  # aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-                  # aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-                  # aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
                   # Hard-code our region, which isn't a secret, and won't change
                   aws-region: us-east-1
 
