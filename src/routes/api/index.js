@@ -9,6 +9,7 @@
 const express = require('express');
 const getControllers = require('./get');
 const postControllers = require('./post');
+const deleteControllers = require('./delete');
 const rawBodyMiddleware = require('../../middleWares/rawBodyParser');
 const router = express.Router();
 // Define our first route, which will be: GET /v1/fragments
@@ -19,5 +20,7 @@ router.get('/fragments/:id/info', getControllers.getOneFragmentByIdWithInfo);
 
 // Other routes (POST, DELETE, etc.) will go here later on...
 router.post('/fragments', rawBodyMiddleware, postControllers.postCreateFragment);
+
+router.delete('/fragments/id', rawBodyMiddleware, deleteControllers.deleteOneFragment);
 
 module.exports = router;

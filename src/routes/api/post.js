@@ -13,7 +13,10 @@ exports.postCreateFragment = async function (req, res) {
         var rawBody = req.body;
         await fragment.save();
         await fragment.setData(rawBody);
-        res.location(`${process.env.API_URL}/v1/fragments/${fragment.id}`);
+        // In linux, this http will be added twice for some reasons.
+        if (process.env.AWS_REGION)
+            res.location(`${process.env.API_URL}/v1/fragments/${fragment.id}`);
+        else res.location(`http://${process.env.API_URL}/v1/fragments/${fragment.id}`);
         res.status(201).json(
             response.createSuccessResponse({
                 fragment: fragment,
