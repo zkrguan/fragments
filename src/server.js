@@ -15,11 +15,9 @@ const server = stoppable(
     app.listen(port, () => {
         // Log a message that the server has started, and which port it's using.
         // RG: I honestly think this is useless.
-        // if (process.env.LOG_LEVEL === 'debug') {
-        //     logger.debug('the processes variables are listed below');
-        //     logger.debug(process.env);
-        //     logger.debug('the end of the process env variables');
-        // }
+        logger.info('the processes variables are listed below');
+        logger.info(process.env);
+        logger.info('the end of the process env variables');
         logger.info(`My lil server is listening on port ${port}`);
     })
 );

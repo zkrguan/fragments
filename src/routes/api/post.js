@@ -32,7 +32,10 @@ exports.postCreateFragment = async function (req, res) {
             );
         } else {
             logger.error(`Unexpected error occured in POST fragments/ route`);
-            logger.debug(err);
+
+            logger.error(`-------------------------------------------------`);
+            logger.error(err);
+            logger.error(`-------------------------------------------------`);
             res.status(400).json(
                 response.createErrorResponse(
                     400,

@@ -21,6 +21,6 @@ router.get('/fragments/:id/info', getControllers.getOneFragmentByIdWithInfo);
 // Other routes (POST, DELETE, etc.) will go here later on...
 router.post('/fragments', rawBodyMiddleware, postControllers.postCreateFragment);
 
-router.delete('/fragments/id', rawBodyMiddleware, deleteControllers.deleteOneFragment);
+router.delete('/fragments/:id', rawBodyMiddleware, deleteControllers.deleteOneFragment);
 
 module.exports = router;
