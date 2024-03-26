@@ -54,6 +54,7 @@
     "family": "fragments-task",
     "taskRoleArn": "arn:aws:iam::416025757163:role/LabRole",
     "executionRoleArn": "arn:aws:iam::416025757163:role/LabRole",
+    "ipcMode": null,
     "networkMode": "awsvpc",
     "revision": 1,
     "volumes": [],
@@ -82,13 +83,8 @@
         }
     ],
     "placementConstraints": [],
-    "compatibilities": [
-        "EC2",
-        "FARGATE"
-    ],
-    "requiresCompatibilities": [
-        "FARGATE"
-    ],
+    "compatibilities": ["EC2", "FARGATE"],
+    "requiresCompatibilities": ["FARGATE"],
     "cpu": "256",
     "memory": "512",
     "runtimePlatform": {
