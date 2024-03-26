@@ -3,3 +3,4 @@
 coverage
 ec2-user*
 .env.dev
+minio
