@@ -50,6 +50,8 @@ jobs:
             # Login to our ECR repository using the configured credentials
             - name: Login to Amazon ECR
               id: login-ecr
+              with:
+                  aws-region: us-east-1
               uses: aws-actions/amazon-ecr-login@v1
 
             - name: Build and push to Amazon ECR
