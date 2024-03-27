@@ -189,6 +189,8 @@ describe('Fragment class', () => {
             await wait();
             await fragment.save();
             const fragment2 = await Fragment.byId(ownerId, fragment.id);
+            console.log(modified1);
+            console.log(fragment2.updated);
             expect(Date.parse(fragment2.updated)).toBeGreaterThan(Date.parse(modified1));
         });
 
@@ -247,7 +249,7 @@ describe('Fragment class', () => {
             await fragment.setData(Buffer.from('a'));
 
             await Fragment.delete('1234', fragment.id);
-            expect(() => Fragment.byId('1234', fragment.id)).rejects.toThrow();
+            await expect(Fragment.byId('1234', fragment.id)).resolves.toBeUndefined();
         });
     });
 

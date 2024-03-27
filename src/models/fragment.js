@@ -78,11 +78,7 @@ class Fragment {
      * @returns Promise<void>
      */
     save() {
-        // console.log('\n');
-        // console.log('\n');
-        // console.log(this);
-        // console.log('\n');
-        // console.log('\n');
+        this.updated = new Date().toISOString();
         return writeFragment(this);
     }
 
