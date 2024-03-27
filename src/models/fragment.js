@@ -36,9 +36,11 @@ class Fragment {
         this.ownerId = ownerId;
         this.type = type;
         // Just in case client code actually feed a time stamp onto the constructor.
-        this.created = !created ? new Date() : created;
-        this.updated = !updated ? new Date() : this.created; // just like mongoDB, you created the object, updated is having same created time stamp.
+        this.created = !created ? new Date().toISOString() : created;
+        this.updated = !updated ? new Date().toISOString() : this.created; // just like mongoDB, you created the object, updated is having same created time stamp.
         this.size = size;
+        console.log(`Inside fragment constructor, checking this`);
+        console.log(this);
     }
 
     /**
@@ -58,17 +60,7 @@ class Fragment {
      * @returns Promise<Fragment>
      */
     static async byId(ownerId, id) {
-        return new Promise((resolve, reject) => {
-            readFragment(ownerId, id)
-                .then((result) => {
-                    if (result === undefined) {
-                        reject(new Error('The result is undefined'));
-                    } else {
-                        resolve(result);
-                    }
-                })
-                .catch((error) => reject(error));
-        });
+        return await readFragment(ownerId, id);
     }
 
     /**
@@ -86,8 +78,11 @@ class Fragment {
      * @returns Promise<void>
      */
     save() {
-        this.updated = new Date();
-        // this looks bad
+        // console.log('\n');
+        // console.log('\n');
+        // console.log(this);
+        // console.log('\n');
+        // console.log('\n');
         return writeFragment(this);
     }
 
@@ -109,7 +104,7 @@ class Fragment {
             if (!data || !Buffer.isBuffer(data) || data.toString() == '') {
                 reject(new Error('The buffer is not given or empty'));
             } else {
-                this.updated = new Date();
+                this.updated = new Date().toISOString();
                 this.size = Buffer.byteLength(data);
                 writeFragmentData(this.ownerId, this.id, data)
                     .then((res) => resolve(res))

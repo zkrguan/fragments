@@ -11,8 +11,24 @@ exports.postCreateFragment = async function (req, res) {
             type: req.headers['content-type'],
         });
         var rawBody = req.body;
-        await fragment.save();
-        await fragment.setData(rawBody);
+        console.log(`before save data`);
+
+        try {
+            await fragment.setData(rawBody);
+        } catch (err) {
+            console.log(err);
+            console.log(`save issues`);
+        }
+        try {
+            await fragment.save();
+        } catch (err) {
+            console.log(`setData Issues`);
+            console.log(err);
+        }
+        console.log(`after saved data, it looks like `);
+        console.log(rawBody);
+        console.log(fragment);
+        console.log('\n\n\n\n');
         // In linux, this http will be added twice for some reasons.
         if (process.env.AWS_REGION)
             res.location(`${process.env.API_URL}/v1/fragments/${fragment.id}`);

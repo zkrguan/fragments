@@ -13,7 +13,8 @@
     "dev": " cross-env LOG_LEVEL=debug nodemon ./src/index.js --watch src",
     "debug": " cross-env  LOG_LEVEL=debug nodemon --inspect=0.0.0.0:9229 ./src/index.js --watch src",
     "test:integration": "cross-env hurl --test --glob \"test/integration/**/*.hurl\"",
-    "test:lab9": "cross-env hurl --test --glob \"test/integration/**/lab-9*.hurl\""
+    "test:lab9": "cross-env hurl --test --glob \"test/integration/**/lab-9*.hurl\"",
+    "test:lab10": "cross-env hurl --test --glob \"test/integration/**/lab-10*.hurl\""
   },
   "repository": {
     "type": "git",

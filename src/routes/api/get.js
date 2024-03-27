@@ -3,6 +3,7 @@ const response = require('../../response');
 const logger = require('../../logger');
 const { supportedConversion } = require('../../configs/settings');
 const markdownit = require('markdown-it');
+const { readFragmentData } = require('../../models/data/index');
 const md = markdownit();
 /**
  * Get a list of fragments for the current user
@@ -33,7 +34,12 @@ exports.getManyFragments = async function (req, res) {
 exports.getOneFragmentById = async function (req, res) {
     const id = req.params['id'];
     try {
+        console.log(38, 39);
+        console.log(`inside teh getOneFragmentByid`);
+        console.log(id);
+        console.log(req.user);
         if (id.includes('.')) {
+            console.log(`in 41`);
             const index = id.search(/\./);
             const trimmedId = id.substring(0, index);
             const extension = id.substring(index);
@@ -50,8 +56,17 @@ exports.getOneFragmentById = async function (req, res) {
                 throw new Error('not supported');
             }
         } else {
+            console.log(`in 58`);
             const result = await Fragment.byId(req.user, id);
-            const data = await result.getData();
+            console.log(result);
+            // ----------Bug is here
+            // result is not
+            console.log(`in 63`);
+            const data = await readFragmentData(req.user, id);
+            console.log(data);
+            console.log(`in 65`);
+            // ----------Bug is here
+            // res.set({ 'Content-Type': result.type }).status(200).send(`done`);
             res.set({ 'Content-Type': result.type }).status(200).send(data);
         }
     } catch (error) {
