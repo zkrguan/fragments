@@ -7,8 +7,6 @@ const { PutCommand, GetCommand, QueryCommand, DeleteCommand } = require('@aws-sd
 // Write a fragment's metadata to memory db. Returns a Promise
 function writeFragment(fragment) {
     // Configure our PUT params, with the name of the table and item (attributes and keys)
-    console.log(`inside the writeFragment. Fragment is ???`);
-    console.log(fragment);
     const params = {
         TableName: process.env.AWS_DYNAMODB_TABLE_NAME,
         Item: fragment,
@@ -32,24 +30,17 @@ async function readFragment(ownerId, id) {
         TableName: process.env.AWS_DYNAMODB_TABLE_NAME,
         Key: { ownerId, id },
     };
-    console.log(params);
-    console.log(ownerId);
-    console.log(id);
     // Create a GET command to send to DynamoDB
     const command = new GetCommand(params);
 
     try {
         // Wait for the data to come back from AWS
         const data = await ddbDocClient.send(command);
-        console.log(`inside readFragment`);
-        console.log(data);
-        console.log(`data is above`);
         // We may or may not get back any data (e.g., no item found for the given key).
         // If we get back an item (fragment), we'll return it.  Otherwise we'll return `undefined`.
         return data?.Item;
     } catch (err) {
-        console.log(err);
-        // logger.warn({ err, params }, 'error reading fragment from DynamoDB');
+        logger.warn({ err, params }, 'error reading fragment from DynamoDB');
         throw err;
     }
 }
@@ -116,9 +107,6 @@ async function readFragmentData(ownerId, id) {
     try {
         // Get the object from the Amazon S3 bucket. It is returned as a ReadableStream.
         const data = await s3Client.send(command);
-        console.log(`inside readFragmentData`);
-        console.log(data);
-        console.log(`data is above`);
         // I need to
         // Convert the ReadableStream to a Buffer
         return streamToBuffer(data.Body);

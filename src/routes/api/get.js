@@ -34,12 +34,7 @@ exports.getManyFragments = async function (req, res) {
 exports.getOneFragmentById = async function (req, res) {
     const id = req.params['id'];
     try {
-        console.log(38, 39);
-        console.log(`inside teh getOneFragmentByid`);
-        console.log(id);
-        console.log(req.user);
         if (id.includes('.')) {
-            console.log(`in 41`);
             const index = id.search(/\./);
             const trimmedId = id.substring(0, index);
             const extension = id.substring(index);
@@ -56,9 +51,7 @@ exports.getOneFragmentById = async function (req, res) {
                 throw new Error('not supported');
             }
         } else {
-            console.log(`in 58`);
             const result = await Fragment.byId(req.user, id);
-            console.log(result);
             if (result) {
                 var data = await readFragmentData(req.user, id);
                 res.set({ 'Content-Type': result.type }).status(200).send(data);
@@ -79,11 +72,10 @@ exports.getOneFragmentById = async function (req, res) {
             );
         } else {
             // This should never run at all, cannot be tested
-            // logger.error(
-            //     `Unexpected error occurred inside the controller of GET /fragments/:id route`
-            // );
-            // logger.debug(error);
-            console.log(error);
+            logger.error(
+                `Unexpected error occurred inside the controller of GET /fragments/:id route`
+            );
+            logger.debug(error);
             res.status(500).json(response.createErrorResponse(500, 'Internal error'));
         }
     }

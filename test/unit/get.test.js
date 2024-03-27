@@ -165,8 +165,6 @@ describe('GET /v1/fragments/:id/info retrieve individual meta data', () => {
     test('Retrieve meta data using GET', async () => {
         expect(objectId).toBeDefined();
         for (let i = 0; i < 5; i++) {
-            console.log(`Test 168`);
-            console.log(objectList[i]);
             const res = await request(app)
                 .get(`/v1/fragments/${objectId[i]}/info`)
                 .auth('user1@email.com', 'password1')

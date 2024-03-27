@@ -11,8 +11,6 @@ exports.postCreateFragment = async function (req, res) {
             type: req.headers['content-type'],
         });
         var rawBody = req.body;
-        console.log(`before save data`);
-
         await fragment.setData(rawBody);
         await fragment.save();
         // In linux, this http will be added twice for some reasons.

@@ -39,8 +39,6 @@ class Fragment {
         this.created = !created ? new Date().toISOString() : created;
         this.updated = !updated ? new Date().toISOString() : this.created; // just like mongoDB, you created the object, updated is having same created time stamp.
         this.size = size;
-        console.log(`Inside fragment constructor, checking this`);
-        console.log(this);
     }
 
     /**
