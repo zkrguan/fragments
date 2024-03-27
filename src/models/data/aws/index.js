@@ -119,6 +119,7 @@ async function readFragmentData(ownerId, id) {
         console.log(`inside readFragmentData`);
         console.log(data);
         console.log(`data is above`);
+        // I need to
         // Convert the ReadableStream to a Buffer
         return streamToBuffer(data.Body);
     } catch (err) {

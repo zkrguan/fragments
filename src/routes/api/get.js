@@ -59,15 +59,16 @@ exports.getOneFragmentById = async function (req, res) {
             console.log(`in 58`);
             const result = await Fragment.byId(req.user, id);
             console.log(result);
+            if (result) {
+                var data = await readFragmentData(req.user, id);
+                res.set({ 'Content-Type': result.type }).status(200).send(data);
+            } else {
+                throw Error('The result is undefined');
+            }
             // ----------Bug is here
             // result is not
-            console.log(`in 63`);
-            const data = await readFragmentData(req.user, id);
-            console.log(data);
-            console.log(`in 65`);
             // ----------Bug is here
             // res.set({ 'Content-Type': result.type }).status(200).send(`done`);
-            res.set({ 'Content-Type': result.type }).status(200).send(data);
         }
     } catch (error) {
         if (error.message === 'The result is undefined') {
@@ -78,10 +79,11 @@ exports.getOneFragmentById = async function (req, res) {
             );
         } else {
             // This should never run at all, cannot be tested
-            logger.error(
-                `Unexpected error occurred inside the controller of GET /fragments/:id route`
-            );
-            logger.debug(error);
+            // logger.error(
+            //     `Unexpected error occurred inside the controller of GET /fragments/:id route`
+            // );
+            // logger.debug(error);
+            console.log(error);
             res.status(500).json(response.createErrorResponse(500, 'Internal error'));
         }
     }
