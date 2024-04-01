@@ -4,6 +4,7 @@ const logger = require('../../logger');
 const { supportedConversion } = require('../../configs/settings');
 const markdownit = require('markdown-it');
 const { readFragmentData } = require('../../models/data/index');
+const sharp = require('sharp');
 const md = markdownit();
 /**
  * Get a list of fragments for the current user
@@ -39,16 +40,27 @@ exports.getOneFragmentById = async function (req, res) {
             const trimmedId = id.substring(0, index);
             const extension = id.substring(index);
             const result = await Fragment.byId(req.user, trimmedId);
-            const trimmedType = result.type.includes(';')
-                ? result.type.substr(0, result.type.search(';'))
-                : result.type;
-            if (supportedConversion[trimmedType].find((ele) => ele === extension) !== undefined) {
-                const dataObject = await conversionHelper(result, extension);
-                res.set({ 'Content-Type': dataObject.contentType })
-                    .status(200)
-                    .send(dataObject.rawData);
+            if (result) {
+                const trimmedType = result.type.includes(';')
+                    ? result.type.substr(0, result.type.search(';'))
+                    : result.type;
+                // Confirmed if the format supports conversion
+                if (
+                    supportedConversion[trimmedType].find((ele) => ele === extension) !== undefined
+                ) {
+                    const dataObject = await conversionHelper(result, extension);
+                    //stackoverflow.com/questions/65650343/how-to-set-response-as-a-png-in-express
+                    console.log(`----------------`);
+                    console.log(dataObject);
+                    console.log(`----------------`);
+                    res.set({ 'Content-Type': dataObject.contentType }).send(
+                        await dataObject.rawData
+                    );
+                } else {
+                    throw new Error('not supported');
+                }
             } else {
-                throw new Error('not supported');
+                throw new Error('The result is undefined');
             }
         } else {
             const result = await Fragment.byId(req.user, id);
@@ -112,26 +124,51 @@ const conversionHelper = async (sourceObject, outputType) => {
     };
     // This is to handle change the content-type in the returned
     // Be aware some cases like converting md to html. => Will change the data from the result object.
-    switch (outputType) {
-        case '.txt':
-            resultObject.contentType = 'text/plain';
-            break;
-        case '.html':
-            // Update result object with HTML data and content type
-            resultObject.rawData = md.render(data.toString('utf-8'));
-            resultObject.contentType = 'text/html';
-            break;
-        case '.json':
-            if (sourceObject.type.toLowerCase().includes('text/csv')) {
-                // resultObject.rawData =
-                resultObject.rawData = csvJSON(data.toString('utf-8'));
-                // Parse CSV data
-                // Convert parsed data to JSON
-            }
-            resultObject.contentType = 'application/json';
-            // Add cases for other output types as needed
-            // Impossible to have any cases because validated before this step
-            break;
+    if (sourceObject.type.includes('image')) {
+        switch (outputType) {
+            case '.png':
+                resultObject.rawData = new sharp(data).png().toBuffer();
+                resultObject.contentType = 'image/png';
+                break;
+            case '.jpg':
+                resultObject.rawData = new sharp(data).jpeg().toBuffer();
+                resultObject.contentType = 'image/jpeg';
+                break;
+            case '.webp':
+                resultObject.rawData = new sharp(data).webp().toBuffer();
+                resultObject.contentType = 'image/webp';
+                break;
+            case '.gif':
+                resultObject.rawData = new sharp(data).gif().toBuffer();
+                resultObject.contentType = 'image/gif';
+                break;
+            case '.avif':
+                resultObject.rawData = new sharp(data).avif().toBuffer();
+                resultObject.contentType = 'image/avif';
+                break;
+        }
+    } else {
+        switch (outputType) {
+            case '.txt':
+                resultObject.contentType = 'text/plain';
+                break;
+            case '.html':
+                // Update result object with HTML data and content type
+                resultObject.rawData = md.render(data.toString('utf-8'));
+                resultObject.contentType = 'text/html';
+                break;
+            case '.json':
+                if (sourceObject.type.toLowerCase().includes('text/csv')) {
+                    // resultObject.rawData =
+                    resultObject.rawData = csvJSON(data.toString('utf-8'));
+                    // Parse CSV data
+                    // Convert parsed data to JSON
+                }
+                resultObject.contentType = 'application/json';
+                // Add cases for other output types as needed
+                // Impossible to have any cases because validated before this step
+                break;
+        }
     }
     return resultObject;
 };
