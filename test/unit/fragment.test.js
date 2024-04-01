@@ -157,11 +157,15 @@ describe('Fragment class', () => {
             });
             // Cuz you added application/json into the supporting type
             expect(fragment.formats).toEqual([
-                'text/plain',
-                'application/json',
+                `text/plain`,
+                `application/json`,
                 `text/markdown`,
                 `text/html`,
-                'text/csv',
+                `text/csv`,
+                `image/png`,
+                `image/jpeg`,
+                `image/webp`,
+                `image/gif`,
             ]);
         });
     });

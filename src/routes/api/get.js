@@ -58,10 +58,6 @@ exports.getOneFragmentById = async function (req, res) {
             } else {
                 throw Error('The result is undefined');
             }
-            // ----------Bug is here
-            // result is not
-            // ----------Bug is here
-            // res.set({ 'Content-Type': result.type }).status(200).send(`done`);
         }
     } catch (error) {
         if (error.message === 'The result is undefined') {
@@ -71,7 +67,6 @@ exports.getOneFragmentById = async function (req, res) {
                 response.createErrorResponse(415, 'This conversion is not supported')
             );
         } else {
-            // This should never run at all, cannot be tested
             logger.error(
                 `Unexpected error occurred inside the controller of GET /fragments/:id route`
             );

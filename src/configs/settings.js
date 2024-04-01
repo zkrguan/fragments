@@ -4,13 +4,10 @@ module.exports.validTypes = [
     `text/markdown`,
     `text/html`,
     `text/csv`,
-    /*
-   Currently, only text/plain is supported. Others will be added later.
-  `image/png`,
-  `image/jpeg`,
-  `image/webp`,
-  `image/gif`,
-  */
+    `image/png`,
+    `image/jpeg`,
+    `image/webp`,
+    `image/gif`,
 ];
 
 module.exports.supportedConversion = {
