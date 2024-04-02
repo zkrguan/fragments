@@ -68,7 +68,7 @@ exports.getOneFragmentById = async function (req, res) {
                 var data = await readFragmentData(req.user, id);
                 res.set({ 'Content-Type': result.type }).status(200).send(data);
             } else {
-                throw Error('The result is undefined');
+                throw new Error('The result is undefined');
             }
         }
     } catch (error) {
