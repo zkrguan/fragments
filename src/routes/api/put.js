@@ -13,12 +13,10 @@ exports.putUpdateOneFragment = async function (req, res) {
                 ? foundRecord.type.substr(0, foundRecord.type.search(';'))
                 : foundRecord.type;
 
-            console.log(req.headers);
             const trimmedHeaderType = req.headers['content-type'].includes(';')
                 ? req.headers['content-type'].substr(0, req.headers['content-type'].search(';'))
                 : req.headers['content-type'];
-            console.log(trimmedHeaderType);
-            console.log(trimmedType);
+
             const isMatched = trimmedType.search(trimmedHeaderType) !== -1;
             if (isMatched) {
                 // Tried to use the OOP way to complete the update process
@@ -31,15 +29,19 @@ exports.putUpdateOneFragment = async function (req, res) {
                 });
                 foundFragment.setData(req.body);
                 foundFragment.save();
+                res.status(200).json(
+                    response.createSuccessResponse({
+                        status: 200,
+                        message: 'updated successfully',
+                        fragment: foundFragment,
+                    })
+                );
             } else {
                 throw new Error('Content type mismatched');
             }
         } else {
             throw new Error('The result is undefined');
         }
-        res.status(200).json(
-            response.createSuccessResponse({ status: 200, message: 'updated successfully' })
-        );
     } catch (error) {
         if (error.message === 'The result is undefined') {
             res.status(404).json(response.createErrorResponse(404, 'Result can not be found'));

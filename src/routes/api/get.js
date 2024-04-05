@@ -50,9 +50,6 @@ exports.getOneFragmentById = async function (req, res) {
                 ) {
                     const dataObject = await conversionHelper(result, extension);
                     //stackoverflow.com/questions/65650343/how-to-set-response-as-a-png-in-express
-                    console.log(`----------------`);
-                    console.log(dataObject);
-                    console.log(`----------------`);
                     res.set({ 'Content-Type': dataObject.contentType }).send(
                         await dataObject.rawData
                     );
@@ -127,23 +124,23 @@ const conversionHelper = async (sourceObject, outputType) => {
     if (sourceObject.type.includes('image')) {
         switch (outputType) {
             case '.png':
-                resultObject.rawData = new sharp(data).png().toBuffer();
+                resultObject.rawData = await new sharp(data).png();
                 resultObject.contentType = 'image/png';
                 break;
             case '.jpg':
-                resultObject.rawData = new sharp(data).jpeg().toBuffer();
+                resultObject.rawData = await new sharp(data).jpeg();
                 resultObject.contentType = 'image/jpeg';
                 break;
             case '.webp':
-                resultObject.rawData = new sharp(data).webp().toBuffer();
+                resultObject.rawData = await new sharp(data).webp();
                 resultObject.contentType = 'image/webp';
                 break;
             case '.gif':
-                resultObject.rawData = new sharp(data).gif().toBuffer();
+                resultObject.rawData = await new sharp(data).gif();
                 resultObject.contentType = 'image/gif';
                 break;
             case '.avif':
-                resultObject.rawData = new sharp(data).avif().toBuffer();
+                resultObject.rawData = await new sharp(data).avif();
                 resultObject.contentType = 'image/avif';
                 break;
         }
@@ -156,6 +153,8 @@ const conversionHelper = async (sourceObject, outputType) => {
                 // Update result object with HTML data and content type
                 resultObject.rawData = md.render(data.toString('utf-8'));
                 resultObject.contentType = 'text/html';
+                console.log(`---------`);
+                console.log(resultObject.rawData);
                 break;
             case '.json':
                 if (sourceObject.type.toLowerCase().includes('text/csv')) {
