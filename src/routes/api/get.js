@@ -114,7 +114,16 @@ exports.getOneFragmentByIdWithInfo = async function (req, res) {
 };
 
 const conversionHelper = async (sourceObject, outputType) => {
-    var data = await sourceObject.getData();
+    var frag = new Fragment({
+        id: sourceObject.id,
+        ownerId: sourceObject.ownerId,
+        created: sourceObject.created,
+        updated: sourceObject.updated,
+        type: sourceObject.type,
+        size: sourceObject.size,
+    });
+    var data = await frag.getData();
+
     const resultObject = {
         rawData: data,
         contentType: '',
