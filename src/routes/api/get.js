@@ -153,8 +153,6 @@ const conversionHelper = async (sourceObject, outputType) => {
                 // Update result object with HTML data and content type
                 resultObject.rawData = md.render(data.toString('utf-8'));
                 resultObject.contentType = 'text/html';
-                console.log(`---------`);
-                console.log(resultObject.rawData);
                 break;
             case '.json':
                 if (sourceObject.type.toLowerCase().includes('text/csv')) {
