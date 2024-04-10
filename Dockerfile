@@ -61,4 +61,4 @@ EXPOSE 8080
 
 
 HEALTHCHECK --interval=15s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl --fail http://localhost:8080 || exit 1
+    CMD curl --fail http://localhost:${PORT} || exit 1
