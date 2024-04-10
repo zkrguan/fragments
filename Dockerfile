@@ -56,7 +56,9 @@ COPY . .
 # COPY ./test/.htpasswd ./test/.htpasswd
 
 # Start the server and get ready to run it
-CMD ["npm", "start"]
+# Use node instead of NPM
+# node src/index.js
+CMD ["node", "src/index.js"]
 EXPOSE 8080
 
 
