@@ -40,6 +40,10 @@
                 {
                     "name": "AWS_DYNAMODB_TABLE_NAME",
                     "value": "fragments"
+                },
+                {
+                    "name": "API_URL",
+                    "value": "https://fragments.zguan25.mystudentproject.ca"
                 }
             ],
             "environmentFiles": [],
