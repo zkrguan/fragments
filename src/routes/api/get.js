@@ -53,6 +53,7 @@ exports.getOneFragmentById = async function (req, res) {
                     res.set({ 'Content-Type': dataObject.contentType }).send(
                         await dataObject.rawData
                     );
+                    // res.send(await dataObject.rawData);
                 } else {
                     throw new Error('not supported');
                 }
@@ -123,7 +124,6 @@ const conversionHelper = async (sourceObject, outputType) => {
         size: sourceObject.size,
     });
     var data = await frag.getData();
-
     const resultObject = {
         rawData: data,
         contentType: '',
@@ -131,28 +131,30 @@ const conversionHelper = async (sourceObject, outputType) => {
     // This is to handle change the content-type in the returned
     // Be aware some cases like converting md to html. => Will change the data from the result object.
     if (sourceObject.type.includes('image')) {
+        const temp = await sharp(data);
         switch (outputType) {
             case '.png':
-                resultObject.rawData = await new sharp(data).png();
+                resultObject.rawData = await temp.png();
                 resultObject.contentType = 'image/png';
                 break;
             case '.jpg':
-                resultObject.rawData = await new sharp(data).jpeg();
+                resultObject.rawData = temp.jpeg();
                 resultObject.contentType = 'image/jpeg';
                 break;
             case '.webp':
-                resultObject.rawData = await new sharp(data).webp();
+                resultObject.rawData = temp.webp();
                 resultObject.contentType = 'image/webp';
                 break;
             case '.gif':
-                resultObject.rawData = await new sharp(data).gif();
+                resultObject.rawData = temp.gif();
                 resultObject.contentType = 'image/gif';
                 break;
             case '.avif':
-                resultObject.rawData = await new sharp(data).avif();
+                resultObject.rawData = temp.avif();
                 resultObject.contentType = 'image/avif';
                 break;
         }
+        resultObject.rawData = await resultObject.rawData.toBuffer();
     } else {
         switch (outputType) {
             case '.txt':
