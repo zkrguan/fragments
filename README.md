@@ -18,6 +18,3 @@ My work repo while learning AWS for developer.
 
 "debug": " cross-env  LOG_LEVEL=debug nodemon --inspect=0.0.0.0:9229 ./src/index.js --watch src"
 
-## Timeline
-
-Milestone 1 repo set up done by Jan 15 2024.
